@@ -24,6 +24,7 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
 	}
 	// 等待1秒
 	Sleep(1000);
+	
 	// 計算結束時間
 	long end_time = time(0) + that->m_time_h*3600+that->m_time_m*60+that->m_time_s;
 	// 如果當前時間未到結束時間則循環
@@ -63,20 +64,23 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
 		}
 		::Sleep(1000);
 	}
+
 	// 關閉雷神加速器
 	if (that->m_close_leishen) {
 		// 尋找雷神加速器窗口
 		HWND leishen = ::FindWindow(NULL, _TEXT("雷神加速器"));
-		// 停止加速
-		::PostMessage(leishen, WM_LBUTTONDOWN, MK_LBUTTON,1008 | 457 <<16);
-		Sleep(50);
-		::PostMessage(leishen, WM_LBUTTONUP, 0, 1008 | 457 << 16);
-		::Sleep(5000);
-		HWND prompt = ::FindWindow(NULL, _TEXT("uiErrorPrompt"));
-		::PostMessage(prompt, WM_LBUTTONDOWN, MK_LBUTTON, 315 | 262 << 16);
-		Sleep(50);
-		::PostMessage(prompt, WM_LBUTTONUP, 0, 315 | 262 << 16);
-		Sleep(2000);
+		if (leishen != NULL) {
+			// 停止加速
+			::PostMessage(leishen, WM_LBUTTONDOWN, MK_LBUTTON, 1008 | 457 << 16);
+			Sleep(50);
+			::PostMessage(leishen, WM_LBUTTONUP, 0, 1008 | 457 << 16);
+			::Sleep(5000);
+			HWND prompt = ::FindWindow(NULL, _TEXT("uiErrorPrompt"));
+			::PostMessage(prompt, WM_LBUTTONDOWN, MK_LBUTTON, 315 | 262 << 16);
+			Sleep(50);
+			::PostMessage(prompt, WM_LBUTTONUP, 0, 315 | 262 << 16);
+			Sleep(2000);
+		}
 	}
 	if (that->m_shutdown) {
 		// 启动关机计划，在60秒后关机，在这期间可以在命令提示符中输入"shutdown -a"取消关机计划

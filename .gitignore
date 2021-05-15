@@ -1,3 +1,13 @@
 
 *.db
 *.log
+*.exe
+*.ilk
+*.pdb
+*.ipch
+*.obj
+*.opendb
+*.idb
+*.pch
+*.res
+*.tlog
