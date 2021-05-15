@@ -57,4 +57,6 @@ public:
 	CString m_skill3;
 	map<char, int> m_nVirtKey;
 	map<char, int> m_scanfCode;
+
+	bool m_started;
 };

@@ -86,7 +86,6 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
 		// 启动关机计划，在60秒后关机，在这期间可以在命令提示符中输入"shutdown -a"取消关机计划
 		system("shutdown -s -t 60");
 	}
-	
 	return 0;
 }
 
@@ -138,6 +137,7 @@ CyuanzhengDlg::CyuanzhengDlg(CWnd* pParent /*=NULL*/)
 	, m_skill1(_T("E"))
 	, m_skill2(_T("D"))
 	, m_skill3(_T(""))
+	, m_started(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_nVirtKey['A'] = 0x41;
@@ -336,6 +336,10 @@ void CyuanzhengDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 	if (!this->UpdateData()) {
 		return;
 	}
+	if (this->m_started) {
+		return;
+	}
+	this->m_started = TRUE;
 	m_input1.EnableWindow(0);
 	m_input2.EnableWindow(0);
 	m_input3.EnableWindow(0);

@@ -11,3 +11,5 @@
 *.pch
 *.res
 *.tlog
+*.ipdb
+*.iobj
