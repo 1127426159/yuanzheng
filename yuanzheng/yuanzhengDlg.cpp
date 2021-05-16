@@ -140,6 +140,16 @@ CyuanzhengDlg::CyuanzhengDlg(CWnd* pParent /*=NULL*/)
 	, m_started(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	m_nVirtKey['0'] = 0x30;
+	m_nVirtKey['1'] = 0x31;
+	m_nVirtKey['2'] = 0x32;
+	m_nVirtKey['3'] = 0x33;
+	m_nVirtKey['4'] = 0x34;
+	m_nVirtKey['5'] = 0x35;
+	m_nVirtKey['6'] = 0x36;
+	m_nVirtKey['7'] = 0x37;
+	m_nVirtKey['8'] = 0x38;
+	m_nVirtKey['9'] = 0x39;
 	m_nVirtKey['A'] = 0x41;
 	m_nVirtKey['B'] = 0x42;
 	m_nVirtKey['C'] = 0x43;
@@ -167,6 +177,16 @@ CyuanzhengDlg::CyuanzhengDlg(CWnd* pParent /*=NULL*/)
 	m_nVirtKey['Y'] = 0x59;
 	m_nVirtKey['Z'] = 0x5a;
 
+	m_scanfCode['1'] = 0x02;
+	m_scanfCode['2'] = 0x03;
+	m_scanfCode['3'] = 0x04;
+	m_scanfCode['4'] = 0x05;
+	m_scanfCode['5'] = 0x06;
+	m_scanfCode['6'] = 0x07;
+	m_scanfCode['7'] = 0x08;
+	m_scanfCode['8'] = 0x09;
+	m_scanfCode['9'] = 0x0a;
+	m_scanfCode['0'] = 0x0b;
 	m_scanfCode['A'] = 0x1e;
 	m_scanfCode['B'] = 0x30;
 	m_scanfCode['C'] = 0x2e;
@@ -262,11 +282,17 @@ BOOL CyuanzhengDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+	for (char i = '0'; i <= '9'; i++) {
+		m_input4.AddString(CString(i));
+		m_input5.AddString(CString(i));
+		m_input6.AddString(CString(i));
+	}
 	for (char i = 'A'; i <= 'Z'; i++) {
 		m_input4.AddString(CString(i));
 		m_input5.AddString(CString(i));
 		m_input6.AddString(CString(i));
 	}
+
 	::RegisterHotKey(m_hWnd, 1001, MOD_CONTROL, VK_F1);
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
