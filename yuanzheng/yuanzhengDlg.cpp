@@ -33,8 +33,8 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
 		struct tm *p;
 		time(&timep);
 		p = gmtime(&timep);
-		// 在每個小時01分和31分的時候釋放技能
-		if (p->tm_min == 1 || p->tm_min == 31) {
+		// 在每個小時0分和3分的時候釋放技能
+		if ((p->tm_min == 0 || p->tm_min == 30) && p->tm_sec>5) {
 			//使用技能1
 			if (that->m_skill1 != "") {
 				::PostMessage(game, WM_KEYDOWN, that->m_nVirtKey[that->m_skill1[0]], 1 | that->m_scanfCode[that->m_skill1[0]] << 16 | 0 << 24);
