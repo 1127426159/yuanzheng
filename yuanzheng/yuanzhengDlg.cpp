@@ -63,6 +63,12 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
 			Sleep(that->m_skill_interval*1000);
 		}
 		::Sleep(1000);
+		//刷新剩余时间
+		long last_time = end_time - time(0);
+		that->m_time_h = last_time / 60 / 60;
+		that->m_time_m = last_time / 60 % 60;
+		that->m_time_s = last_time % 60;
+		that->UpdateData(0);
 	}
 
 	// 關閉雷神加速器
