@@ -33,8 +33,14 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
 		struct tm *p;
 		time(&timep);
 		p = gmtime(&timep);
-		// 在每個小時0分和3分的時候釋放技能
-		if ((p->tm_min == 0 || p->tm_min == 30) && p->tm_sec>5) {
+		// 在每個小時0分和30分的時候釋放技能
+		if ((p->tm_min == 0 || p->tm_min == 33) && p->tm_sec>3) {
+			// 设置游戏窗口为前置窗口
+			HWND top = ::GetForegroundWindow();
+			if (top != game) {
+				::SetForegroundWindow(game);
+			}
+			Sleep(2000);
 			//使用技能1
 			if (that->m_skill1 != "") {
 				::PostMessage(game, WM_KEYDOWN, that->m_nVirtKey[that->m_skill1[0]], 1 | that->m_scanfCode[that->m_skill1[0]] << 16 | 0 << 24);
@@ -60,7 +66,7 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
 			}
 			
 			//等待技能施放間隔后再次施放
-			Sleep(that->m_skill_interval*1000);
+			Sleep(that->m_skill_interval*1000-2000);
 		}
 		::Sleep(1000);
 		//刷新剩余时间
@@ -134,7 +140,7 @@ END_MESSAGE_MAP()
 
 CyuanzhengDlg::CyuanzhengDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_YUANZHENG_DIALOG, pParent)
-	, m_time_h(2)
+	, m_time_h(5)
 	, m_time_m(0)
 	, m_time_s(0)
 	, m_skill_interval(20)
