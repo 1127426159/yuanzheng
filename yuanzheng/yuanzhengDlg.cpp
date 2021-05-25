@@ -15,58 +15,63 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
 	CyuanzhengDlg* that = (CyuanzhengDlg*)lpParameter;
 	// 启动提示音
 	::Beep(500, 200);
+	int delay_second = that->m_delay * 60;
+	for (int i = 0; i < delay_second; i++) {
+		::Sleep(1000);
+		that->UpdateData(0);
+	}
 	// 寻找新楓之谷窗口
 	HWND game = ::FindWindow(_TEXT("MapleStoryClass"), NULL);
-	// 檢查游戲窗口是否存在
+	// 檢查游戏窗口是否存在
 	if (game == NULL) {
 		that->MessageBox(_TEXT("未檢測到游戲窗口"));
 		exit(0);
 	}
 	// 等待1秒
 	Sleep(1000);
-	
-	// 計算結束時間
+	long next_time = time(0);
+	// 计算结束时间
 	long end_time = time(0) + that->m_time_h*3600+that->m_time_m*60+that->m_time_s;
-	// 如果當前時間未到結束時間則循環
-	while (end_time > time(0)) {
-		time_t timep;
-		struct tm *p;
-		time(&timep);
-		p = gmtime(&timep);
-		// 在每個小時0分和30分的時候釋放技能
-		if ((p->tm_min == 0 || p->tm_min == 33) && p->tm_sec>3) {
+	// 如果当前时间未到则停止循环
+	long now;
+	while (end_time > (now=time(0))) {
+		// 每过半个小时释放技能
+		if (now > next_time) {
+			//更新下次释放技能的时间
+			next_time = now + 30 * 60;
 			// 设置游戏窗口为前置窗口
 			HWND top = ::GetForegroundWindow();
 			if (top != game) {
 				::SetForegroundWindow(game);
 			}
 			Sleep(2000);
-			//使用技能1
-			if (that->m_skill1 != "") {
-				::PostMessage(game, WM_KEYDOWN, that->m_nVirtKey[that->m_skill1[0]], 1 | that->m_scanfCode[that->m_skill1[0]] << 16 | 0 << 24);
-				::Sleep(50);
-				::PostMessage(game, WM_KEYUP, that->m_nVirtKey[that->m_skill1[0]], 1 | 1 << 30 | 1 << 31 | that->m_scanfCode[that->m_skill1[0]] << 16 | 0 << 24);
-				::Sleep(1000);
+			for (int i = 0; i < that->m_count; i++) {
+				//使用技能1
+				if (that->m_skill1 != "") {
+					::PostMessage(game, WM_KEYDOWN, that->m_nVirtKey[that->m_skill1[0]], 1 | that->m_scanfCode[that->m_skill1[0]] << 16 | 0 << 24);
+					::Sleep(50);
+					::PostMessage(game, WM_KEYUP, that->m_nVirtKey[that->m_skill1[0]], 1 | 1 << 30 | 1 << 31 | that->m_scanfCode[that->m_skill1[0]] << 16 | 0 << 24);
+					::Sleep(1000);
+				}
+
+				//使用技能2
+				if (that->m_skill2 != "") {
+					::PostMessage(game, WM_KEYDOWN, that->m_nVirtKey[that->m_skill2[0]], 1 | that->m_scanfCode[that->m_skill2[0]] << 16 | 0 << 24);
+					::Sleep(50);
+					::PostMessage(game, WM_KEYUP, that->m_nVirtKey[that->m_skill2[0]], 1 | 1 << 30 | 1 << 31 | that->m_scanfCode[that->m_skill2[0]] << 16 | 0 << 24);
+					::Sleep(1000);
+				}
+
+				//使用技能3
+				if (that->m_skill3 != "") {
+					::PostMessage(game, WM_KEYDOWN, that->m_nVirtKey[that->m_skill3[0]], 1 | that->m_scanfCode[that->m_skill3[0]] << 16 | 0 << 24);
+					::Sleep(50);
+					::PostMessage(game, WM_KEYUP, that->m_nVirtKey[that->m_skill3[0]], 1 | 1 << 30 | 1 << 31 | that->m_scanfCode[that->m_skill3[0]] << 16 | 0 << 24);
+					::Sleep(1000);
+				}
+				//等待技能施放间隔后再次施放
+				Sleep(that->m_skill_interval*1000);
 			}
-			
-			//使用技能2
-			if (that->m_skill2 != "") {
-				::PostMessage(game, WM_KEYDOWN, that->m_nVirtKey[that->m_skill2[0]], 1 | that->m_scanfCode[that->m_skill2[0]] << 16 | 0 << 24);
-				::Sleep(50);
-				::PostMessage(game, WM_KEYUP, that->m_nVirtKey[that->m_skill2[0]], 1 | 1 << 30 | 1 << 31 | that->m_scanfCode[that->m_skill2[0]] << 16 | 0 << 24);
-				::Sleep(1000);
-			}
-			
-			//使用技能3
-			if (that->m_skill3 != "") {
-				::PostMessage(game, WM_KEYDOWN, that->m_nVirtKey[that->m_skill3[0]], 1 | that->m_scanfCode[that->m_skill3[0]] << 16 | 0 << 24);
-				::Sleep(50);
-				::PostMessage(game, WM_KEYUP, that->m_nVirtKey[that->m_skill3[0]], 1 | 1 << 30 | 1 << 31 | that->m_scanfCode[that->m_skill3[0]] << 16 | 0 << 24);
-				::Sleep(1000);
-			}
-			
-			//等待技能施放間隔后再次施放
-			Sleep(that->m_skill_interval*1000-2000);
 		}
 		::Sleep(1000);
 		//刷新剩余时间
@@ -77,9 +82,9 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
 		that->UpdateData(0);
 	}
 
-	// 關閉雷神加速器
+	// 关闭雷神加速器
 	if (that->m_close_leishen) {
-		// 尋找雷神加速器窗口
+		// 寻找雷神加速器窗口
 		HWND leishen = ::FindWindow(NULL, _TEXT("雷神加速器"));
 		if (leishen != NULL) {
 			// 停止加速
@@ -150,6 +155,8 @@ CyuanzhengDlg::CyuanzhengDlg(CWnd* pParent /*=NULL*/)
 	, m_skill2(_T("D"))
 	, m_skill3(_T(""))
 	, m_started(0)
+	, m_delay(5)
+	, m_count(1)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_nVirtKey['0'] = 0x30;
@@ -252,6 +259,10 @@ void CyuanzhengDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_CBString(pDX, IDC_COMBO2, m_skill1);
 	DDX_CBString(pDX, IDC_COMBO3, m_skill2);
 	DDX_CBString(pDX, IDC_COMBO4, m_skill3);
+	DDX_Text(pDX, IDC_EDIT5, m_delay);
+	DDV_MinMaxInt(pDX, m_delay, 0, 25);
+	DDX_Text(pDX, IDC_EDIT6, m_count);
+	DDV_MinMaxInt(pDX, m_count, 1, 10);
 }
 
 BEGIN_MESSAGE_MAP(CyuanzhengDlg, CDialogEx)

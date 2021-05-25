@@ -59,4 +59,6 @@ public:
 	map<char, int> m_scanfCode;
 
 	bool m_started;
+	int m_delay;
+	int m_count;
 };
