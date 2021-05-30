@@ -15,6 +15,7 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
 	CyuanzhengDlg* that = (CyuanzhengDlg*)lpParameter;
 	// 启动提示音
 	::Beep(500, 200);
+	// 延迟启动
 	int delay_second = that->m_delay * 60;
 	for (int i = 0; i < delay_second; i++) {
 		::Sleep(1000);
@@ -29,6 +30,7 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
 	}
 	// 等待1秒
 	Sleep(1000);
+
 	long next_time = time(0);
 	// 计算结束时间
 	long end_time = time(0) + that->m_time_h*3600+that->m_time_m*60+that->m_time_s;
@@ -38,7 +40,7 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
 		// 每过半个小时释放技能
 		if (now > next_time) {
 			//更新下次释放技能的时间
-			next_time = now + 30 * 60;
+			next_time = now + 25 * 60+5;
 			// 设置游戏窗口为前置窗口
 			HWND top = ::GetForegroundWindow();
 			if (top != game) {
@@ -155,7 +157,7 @@ CyuanzhengDlg::CyuanzhengDlg(CWnd* pParent /*=NULL*/)
 	, m_skill2(_T("D"))
 	, m_skill3(_T(""))
 	, m_started(0)
-	, m_delay(5)
+	, m_delay(0)
 	, m_count(1)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
@@ -263,6 +265,8 @@ void CyuanzhengDlg::DoDataExchange(CDataExchange* pDX)
 	DDV_MinMaxInt(pDX, m_delay, 0, 25);
 	DDX_Text(pDX, IDC_EDIT6, m_count);
 	DDV_MinMaxInt(pDX, m_count, 1, 10);
+	DDX_Control(pDX, IDC_EDIT5, m_input10);
+	DDX_Control(pDX, IDC_EDIT6, m_input11);
 }
 
 BEGIN_MESSAGE_MAP(CyuanzhengDlg, CDialogEx)
@@ -398,6 +402,8 @@ void CyuanzhengDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 	m_input7.EnableWindow(0);
 	m_input8.EnableWindow(0);
 	m_input9.EnableWindow(0);
+	m_input10.EnableWindow(0);
+	m_input11.EnableWindow(0);
 	if (nHotKeyId == 1001) {
 		CreateThread(NULL, 0, ThreadProc, (LPVOID)this, 0, NULL);
 	}

@@ -61,4 +61,6 @@ public:
 	bool m_started;
 	int m_delay;
 	int m_count;
+	CEdit m_input10;
+	CEdit m_input11;
 };
